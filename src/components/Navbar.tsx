@@ -20,8 +20,48 @@ const mobileNavAnimStyle = `
     transform: translateX(0) scale(1);
   }
 }
+
+@keyframes scaleInLogo {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  70% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInHireMe {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+  }
+  70% {
+    opacity: 0.9;
+    transform: translateY(5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .mobile-nav-slidein {
   animation: slideInLeftMobile 0.55s cubic-bezier(.6,1.3,.4,1.05) both;
+}
+
+.logo-animation {
+  animation: scaleInLogo 0.8s cubic-bezier(.4,1.4,.4,1) both;
+}
+
+.hire-me-animation {
+  animation: slideInHireMe 0.8s cubic-bezier(.4,1.4,.4,1) both;
+  animation-delay: 0.2s;
 }
 `;
 
@@ -80,7 +120,7 @@ const Navbar = () => {
         {/* Logo */}
         <a
           href="/"
-          className="text-xl md:text-2xl font-bold theme-color-primary flex items-center group shrink-0"
+          className="text-xl md:text-2xl font-bold theme-color-primary flex items-center group shrink-0 logo-animation"
         >
           <Heart
             className="mr-2 text-[var(--color-secondary)] fill-[var(--color-secondary)] heart-bounce"
@@ -90,7 +130,7 @@ const Navbar = () => {
             Ariful
           </span>
           <span className="group-hover:text-[var(--color-secondary)] transition-colors">
-            Islam
+          GFX
           </span>
         </a>
 
@@ -118,7 +158,7 @@ const Navbar = () => {
         </div>
 
         {/* Hire Me Button - Right aligned */}
-        <div className="hidden md:block shrink-0">
+        <div className="hidden md:block shrink-0 hire-me-animation">
           <EmotionalButton
             href="/contact"
             className="theme-bg-secondary text-white py-2 px-6 rounded-full font-medium hover:scale-110 hover:bg-yellow-400 hover:text-green-900 transition-all duration-200 flex items-center hire-me-btn"

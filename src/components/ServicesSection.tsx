@@ -1,8 +1,43 @@
-
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import EmotionalButton from "./EmotionalButton";
 import { Link } from "react-router-dom";
+
+// ==== Animation CSS for Services Section ====
+const servicesAnimStyle = `
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service-card-animate {
+  animation: slideUpFade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+`;
+
+if (typeof window !== "undefined") {
+  const styleId = "services-section-anim";
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement("style");
+    style.id = styleId;
+    style.innerHTML = servicesAnimStyle;
+    document.head.appendChild(style);
+  }
+}
 
 const services = [
   {
@@ -101,7 +136,7 @@ const ServicesSection = () => {
     >
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-10 sm:mb-16 gap-6 md:gap-8">
-          <div>
+          <div className="service-card-animate delay-100">
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight text-gray-900 mb-3 sm:mb-4 tracking-tight">
               Services{" "}
               <span className="text-[var(--color-secondary)]">I Provide</span>
@@ -112,7 +147,7 @@ const ServicesSection = () => {
               our team.
             </p>
           </div>
-          <div className="hidden md:block">
+          <div className="hidden md:block service-card-animate delay-200">
             <Link to="/services">
               <EmotionalButton
                 className="bg-[var(--color-primary)] hover:bg-[var(--color-secondary)] text-white px-7 py-2 rounded-full font-semibold shadow-md transition-colors flex items-center gap-2"
@@ -127,14 +162,15 @@ const ServicesSection = () => {
         </div>
         {/* Card Grid with extra top margin for separation from header */}
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
-          {services.map((service) => (
+          {services.map((service, index) => (
             <div
               key={service.id}
-              className={`mt-10 group bg-white rounded-2xl border border-gray-100 shadow-md relative flex flex-col px-5 sm:px-8 pt-10 pb-7 transition-all duration-300 hover:shadow-lg hover:-translate-y-2 ${
+              className={`mt-10 group bg-white rounded-2xl border border-gray-100 shadow-md relative flex flex-col px-5 sm:px-8 pt-10 pb-7 transition-all duration-300 hover:shadow-lg hover:-translate-y-2 service-card-animate ${
                 hoveredCard === service.id
                   ? "ring-2 ring-[var(--color-secondary)]/40"
                   : ""
               }`}
+              style={{ animationDelay: `${(index + 3) * 100}ms` }}
               onMouseEnter={() => setHoveredCard(service.id)}
               onMouseLeave={() => setHoveredCard(null)}
             >
@@ -188,7 +224,6 @@ const ServicesSection = () => {
                   <span className="text-[var(--color-primary)] group-hover/learnmore:text-[var(--color-secondary)] text-sm font-semibold transition-colors">
                     Learn More
                   </span>
-                  {/* Animated ArrowRight */}
                   <ArrowRight
                     className="
                       h-4 w-4 ml-1 
@@ -205,7 +240,7 @@ const ServicesSection = () => {
           ))}
         </div>
         {/* Mobile Only: View All */}
-        <div className="mt-10 sm:mt-12 flex justify-center md:hidden">
+        <div className="mt-10 sm:mt-12 flex justify-center md:hidden service-card-animate delay-600">
           <Link to="/services">
             <EmotionalButton
               className="bg-[var(--color-secondary)] hover:bg-[var(--color-primary)] text-white px-7 py-2 rounded-full font-semibold shadow transition-colors flex items-center gap-2"

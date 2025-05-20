@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import EmotionalButton from "./EmotionalButton";
 import { ArrowRight, Eye } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 // logo design portfolio
 
@@ -33,7 +34,165 @@ import imageclippingpath from "../assets/portfolios/background-remove/clipping-p
 import boldpath from "../assets/portfolios/logo-design/brand-guidelines/letter-bp/1/1.jpg";
 import ranova from "../assets/portfolios/logo-design/brand-guidelines/letter-rn/1/1.jpg";
 
+// ==== Animation CSS for Portfolio Section ====
+const portfolioAnimStyle = `
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.portfolio-card {
+  position: relative;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.portfolio-card.animate {
+  animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.portfolio-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-image img {
+  transition: transform 0.5s ease;
+}
+
+.portfolio-card:hover .portfolio-image img {
+  transform: scale(1.05);
+}
+
+.portfolio-title {
+  position: relative;
+  transition: color 0.3s ease;
+  padding-bottom: 8px;
+}
+
+.portfolio-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+}
+
+.portfolio-card:hover .portfolio-title::after {
+  width: 100%;
+}
+
+.view-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.view-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.section-title {
+  position: relative;
+  display: inline-block;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+}
+
+.section-title:hover::after {
+  width: 100%;
+}
+
+.view-all-button {
+  transition: all 0.3s ease;
+  animation: fadeIn 0.8s ease forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.view-all-button:hover {
+  transform: translateX(5px);
+}
+`;
+
+if (typeof window !== "undefined") {
+  const styleId = "portfolio-section-anim";
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement("style");
+    style.id = styleId;
+    style.innerHTML = portfolioAnimStyle;
+    document.head.appendChild(style);
+  }
+}
+
 const PortfolioSection = () => {
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px'
+      }
+    );
+
+    cardsRef.current.forEach((card) => {
+      if (card) {
+        observer.observe(card);
+      }
+    });
+
+    return () => {
+      cardsRef.current.forEach((card) => {
+        if (card) {
+          observer.unobserve(card);
+        }
+      });
+    };
+  }, []);
+
   const portfolioItems = [
     {
       id: "momentum-clothing-brand-for-men",
@@ -125,12 +284,12 @@ const PortfolioSection = () => {
     <section id="portfolio" className="py-24 bg-muted">
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex justify-between items-center flex-wrap mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold theme-color-primary">
+          <h2 className="text-3xl md:text-4xl font-bold theme-color-primary section-title">
             My Latest Projects
           </h2>
           <EmotionalButton
             href="/projects"
-            className="mt-4 md:mt-0 theme-bg-secondary hover:bg-[#f9be5a] text-white px-5 py-3 rounded-full font-semibold flex items-center shadow transition-all duration-300"
+            className="mt-4 md:mt-0 theme-bg-secondary hover:bg-[#f9be5a] text-white px-5 py-3 rounded-full font-semibold flex items-center shadow transition-all duration-300 view-all-button"
             emotionType="heart"
             numEmotions={3}
           >
@@ -139,19 +298,18 @@ const PortfolioSection = () => {
           </EmotionalButton>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Only .map, NO .slice! */}
-          {portfolioItems.map((item) => (
+          {portfolioItems.map((item, index) => (
             <div
               key={item.id}
-              className="portfolio-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-fade-in"
+              ref={(el) => (cardsRef.current[index] = el)}
+              className="portfolio-card bg-white rounded-xl overflow-hidden shadow-md group"
             >
-              <div className="h-80 overflow-hidden relative">
+              <div className="h-80 overflow-hidden relative portfolio-image">
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"></div>
               </div>
               <div className="p-6">
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -165,7 +323,7 @@ const PortfolioSection = () => {
                   ))}
                 </div>
                 <Link to={`/projects/${item.id}`}>
-                  <h3 className="text-xl font-bold text-black-soft group-hover:text-[var(--color-primary)] transition-colors">
+                  <h3 className="text-xl font-bold text-black-soft group-hover:text-[var(--color-primary)] transition-colors portfolio-title">
                     {item.title}
                   </h3>
                 </Link>

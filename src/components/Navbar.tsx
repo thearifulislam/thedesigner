@@ -9,26 +9,18 @@ const mobileNavAnimStyle = `
 @keyframes slideInLeftMobile {
   0% {
     opacity: 0;
-    transform: translateX(-120px) scale(0.95);
-  }
-  70% {
-    opacity: 0.9;
-    transform: translateX(8px) scale(1.03);
+    transform: translateX(-20px);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
   }
 }
 
 @keyframes scaleInLogo {
   0% {
     opacity: 0;
-    transform: scale(0.7);
-  }
-  70% {
-    opacity: 0.9;
-    transform: scale(1.1);
+    transform: scale(0.9);
   }
   100% {
     opacity: 1;
@@ -39,29 +31,25 @@ const mobileNavAnimStyle = `
 @keyframes slideInHireMe {
   0% {
     opacity: 0;
-    transform: translateY(-20px) scale(0.9);
-  }
-  70% {
-    opacity: 0.9;
-    transform: translateY(5px) scale(1.05);
+    transform: translateY(-10px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .mobile-nav-slidein {
-  animation: slideInLeftMobile 0.55s cubic-bezier(.6,1.3,.4,1.05) both;
+  animation: slideInLeftMobile 0.3s ease-out both;
 }
 
 .logo-animation {
-  animation: scaleInLogo 0.8s cubic-bezier(.4,1.4,.4,1) both;
+  animation: scaleInLogo 0.5s ease-out both;
 }
 
 .hire-me-animation {
-  animation: slideInHireMe 0.8s cubic-bezier(.4,1.4,.4,1) both;
-  animation-delay: 0.2s;
+  animation: slideInHireMe 0.4s ease-out both;
+  animation-delay: 0.1s;
 }
 `;
 
@@ -115,7 +103,7 @@ const Navbar = () => {
   });
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-md">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4 md:px-8 flex items-center min-h-[64px]">
         {/* Logo */}
         <a
@@ -123,14 +111,14 @@ const Navbar = () => {
           className="text-xl md:text-2xl font-bold theme-color-primary flex items-center group shrink-0 logo-animation"
         >
           <Heart
-            className="mr-2 text-[var(--color-secondary)] fill-[var(--color-secondary)] heart-bounce"
+            className="mr-2 text-[var(--color-secondary)] fill-[var(--color-secondary)]"
             size={20}
           />
           <span className="text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors">
             Ariful
           </span>
           <span className="group-hover:text-[var(--color-secondary)] transition-colors">
-          GFX
+            GFX
           </span>
         </a>
 
@@ -141,7 +129,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.href}
-                className={`font-medium nav-item transition-colors duration-300 nav-item-animation ${
+                className={`font-medium nav-item transition-colors duration-300 ${
                   activeLink === link.href ? "theme-color-secondary" : ""
                 }`}
                 style={{
@@ -161,8 +149,7 @@ const Navbar = () => {
         <div className="hidden md:block shrink-0 hire-me-animation">
           <EmotionalButton
             href="/contact"
-            className="theme-bg-secondary text-white py-2 px-6 rounded-full font-medium hover:scale-110 hover:bg-yellow-400 hover:text-green-900 transition-all duration-200 flex items-center hire-me-btn"
-            style={{ transition: "transform 0.25s cubic-bezier(.4,2,.5,1)" }}
+            className="theme-bg-secondary text-white py-2 px-6 rounded-full font-medium hover:scale-105 hover:bg-yellow-400 hover:text-green-900 transition-all duration-200 flex items-center"
             emotionType="heart"
             numEmotions={3}
           >
@@ -171,10 +158,10 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="md:hidden ml-auto">
           <button
             onClick={handleMenuToggle}
-            className="text-black-soft focus:outline-none"
+            className="p-2 text-black-soft focus:outline-none"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? (
@@ -194,34 +181,34 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Nav Slide-in Left (More visible & smooth) */}
+      {/* Mobile Nav Slide-in */}
       {isOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-sm shadow-lg transition-all duration-200">
-          <div className="px-4 py-6 space-y-5 flex flex-col">
+        <div className="md:hidden bg-white border-t">
+          <div className="px-4 py-4 space-y-3">
             {navLinks.map((link, idx) => (
               <Link
                 key={link.name}
                 to={link.href}
                 className={`
-                  block font-medium rounded-xl shadow nav-mobile-card mobile-nav-slidein hover:scale-105 transition
+                  block font-medium rounded-lg transition-colors duration-200 mobile-nav-slidein
                   ${
                     activeLink === link.href
-                      ? "bg-yellow-50 theme-color-secondary border border-yellow-300"
-                      : "bg-white/95"
+                      ? "bg-yellow-50 theme-color-secondary"
+                      : "hover:bg-gray-50"
                   }
                 `}
                 style={getAnimDelay(idx)}
                 onClick={() => setIsOpen(false)}
               >
-                <div className="px-4 py-3 flex items-center space-x-3 text-base">
-                  <span>{link.name}</span>
+                <div className="px-4 py-3 text-base">
+                  {link.name}
                 </div>
               </Link>
             ))}
             <div style={getAnimDelay(navLinks.length)}>
               <EmotionalButton
                 href="/contact"
-                className="block w-full theme-bg-secondary text-white py-2 px-6 rounded-xl font-medium text-center hover:theme-bg-primary hover:text-white transition-colors duration-300 flex items-center justify-center hire-me-btn shadow mobile-nav-slidein"
+                className="block w-full theme-bg-secondary text-white py-3 px-6 rounded-lg font-medium text-center hover:bg-yellow-400 hover:text-green-900 transition-colors duration-200 flex items-center justify-center mobile-nav-slidein"
                 emotionType="heart"
                 numEmotions={2}
                 onClick={() => setIsOpen(false)}
